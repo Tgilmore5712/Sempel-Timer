@@ -1,14 +1,13 @@
 package com.pmc.timer.ui
 
 import android.app.Application
-import android.media.AudioManager
-import android.media.ToneGenerator
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.pmc.timer.models.BoilItem
+import com.pmc.timer.audio.AlarmSoundPlayer
 import com.pmc.timer.worker.AlertWorker
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -168,15 +167,12 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
                 firedDropTimes = fired,
                 alertMessage = "Drop in: ${newAlerts.joinToString(", ")}"
             ) }
-            playBeep()
+            playAlarmSound()
         }
     }
 
-    private fun playBeep() {
-        try {
-            val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
-            toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 500)
-        } catch (e: Exception) { }
+    private fun playAlarmSound() {
+        AlarmSoundPlayer.playOnce(getApplication())
     }
 
     fun reset() {
