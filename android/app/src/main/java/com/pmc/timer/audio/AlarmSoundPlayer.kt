@@ -12,7 +12,8 @@ object AlarmSoundPlayer {
     private const val DEFAULT_PLAY_DURATION_MS = 1800L
 
     fun resolveAlarmUri(context: Context): Uri {
-        return RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_ALARM)
+        return AlarmPreferences.getSavedUri(context)
+            ?: RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_ALARM)
             ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             ?: RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_NOTIFICATION)
             ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)

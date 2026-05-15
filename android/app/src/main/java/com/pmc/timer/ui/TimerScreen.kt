@@ -1,5 +1,10 @@
 package com.pmc.timer.ui
 
+import android.app.Activity
+import android.media.RingtoneManager
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,25 +18,56 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pmc.timer.audio.AlarmPreferences
+import com.pmc.timer.audio.AlarmSoundPlayer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimerScreen(viewModel: TimerViewModel = viewModel()) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
     val longestSeconds = if (state.items.isEmpty()) 0 else (state.items.maxOf { it.minutes } * 60).toInt()
     val remaining = (longestSeconds - state.elapsed).coerceAtLeast(0)
     val progress = if (longestSeconds > 0) (state.elapsed.toFloat() / longestSeconds) else 0f
+
+    val ringtoneLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri: Uri? = result.data
+                ?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+            AlarmPreferences.saveUri(context, uri)
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Seafood Boil Timer", fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+                actions = {
+                    IconButton(onClick = {
+                        val currentUri = AlarmSoundPlayer.resolveAlarmUri(context)
+                        val intent = RingtoneManager.ACTION_RINGTONE_PICKER.let {
+                            android.content.Intent(it).apply {
+                                putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+                                putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
+                                putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+                                putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentUri)
+                                putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Alarm Sound")
+                            }
+                        }
+                        ringtoneLauncher.launch(intent)
+                    }) {
+                        Icon(Icons.Default.Notifications, contentDescription = "Select alarm sound")
+                    }
+                }
             )
         }
     ) { padding ->
