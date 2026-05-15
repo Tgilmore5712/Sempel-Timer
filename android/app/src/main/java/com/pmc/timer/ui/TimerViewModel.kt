@@ -114,7 +114,8 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
         currentState.items.forEach { item ->
             val dropAt = (longestSeconds - (item.minutes * 60)).toInt()
             val delaySeconds = dropAt - currentElapsed
-            if (delaySeconds >= 0) {
+            // Skip immediate start-time alerts; user has already started with the longest item in.
+            if (delaySeconds > 0) {
                 val data = Data.Builder()
                     .putString("title", "Drop in: ${item.name}")
                     .putString("message", "Time to add ${item.name} to the boil")
@@ -158,7 +159,7 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
 
         _state.value.items.forEach { item ->
             val dropAt = (totalSeconds - (item.minutes * 60)).toInt()
-            if (elapsed >= dropAt && !fired.contains(item.id)) {
+            if (dropAt > 0 && elapsed >= dropAt && !fired.contains(item.id)) {
                 fired.add(item.id)
                 newAlerts.add(item.name)
             }
