@@ -118,6 +118,7 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
                 val data = Data.Builder()
                     .putString("title", "Drop in: ${item.name}")
                     .putString("message", "Time to add ${item.name} to the boil")
+                    .putString("itemName", item.name)
                     .build()
 
                 val workRequest = OneTimeWorkRequest.Builder(AlertWorker::class.java)
@@ -134,6 +135,7 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
             val data = Data.Builder()
                 .putString("title", "Boil Complete!")
                 .putString("message", "Pull everything out of the water")
+                .putString("itemName", "")
                 .build()
             val workRequest = OneTimeWorkRequest.Builder(AlertWorker::class.java)
                 .setInitialDelay(finishDelay.toLong(), TimeUnit.SECONDS)
@@ -163,16 +165,21 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         if (newAlerts.isNotEmpty()) {
+            val itemList = newAlerts.joinToString(" and ")
             _state.update { it.copy(
                 firedDropTimes = fired,
                 alertMessage = "Drop in: ${newAlerts.joinToString(", ")}"
             ) }
-            playAlarmSound()
+            playAlarmSound(itemList)
         }
     }
 
-    private fun playAlarmSound() {
-        AlarmSoundPlayer.playOnce(getApplication())
+    private fun playAlarmSound(itemNames: String? = null) {
+        val announcement = if (!itemNames.isNullOrBlank())
+            "Time to add $itemNames"
+        else
+            "Time to add next item"
+        AlarmSoundPlayer.playWithAnnouncement(getApplication(), announcement)
     }
 
     fun reset() {

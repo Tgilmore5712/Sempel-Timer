@@ -14,9 +14,12 @@ class AlertWorker(context: Context, params: WorkerParameters) : Worker(context, 
     override fun doWork(): Result {
         val title = inputData.getString("title") ?: "Boil Alert"
         val message = inputData.getString("message") ?: "Time to drop in next item!"
-        
+        val itemName = inputData.getString("itemName") ?: ""
+        val announcement = if (itemName.isNotBlank()) "Time to add $itemName" else message
+
         showNotification(title, message)
-        
+        AlarmSoundPlayer.playWithAnnouncement(applicationContext, announcement)
+
         return Result.success()
     }
 
