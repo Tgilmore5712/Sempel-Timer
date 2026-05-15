@@ -9,7 +9,7 @@ import android.os.Looper
 import android.provider.Settings
 
 object AlarmSoundPlayer {
-    private const val DEFAULT_PLAY_DURATION_MS = 1800L
+    private const val DEFAULT_PLAY_DURATION_MS = 8_000L
 
     fun resolveAlarmUri(context: Context): Uri {
         return AlarmPreferences.getSavedUri(context)
@@ -27,6 +27,10 @@ object AlarmSoundPlayer {
                 .setUsage(AudioAttributes.USAGE_ALARM)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build()
+            // Loop so short ringtones repeat for the full duration
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                ringtone.isLooping = true
+            }
             ringtone.play()
 
             Handler(Looper.getMainLooper()).postDelayed({
