@@ -1,5 +1,6 @@
 package com.pmc.timer.worker
 
+import android.app.ActivityManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -17,10 +18,24 @@ class AlertWorker(context: Context, params: WorkerParameters) : Worker(context, 
         val itemName = inputData.getString("itemName") ?: ""
         val announcement = if (itemName.isNotBlank()) "Time to add $itemName" else message
 
-        showNotification(title, message)
-        AlarmSoundPlayer.playWithAnnouncement(applicationContext, announcement)
+        val appInForeground = isAppInForeground(applicationContext)
+
+        // Only show notification and play sound from worker when app is in background.
+        // When foregrounded, TimerViewModel handles both UI alert and sound to avoid double-play.
+        if (!appInForeground) {
+            showNotification(title, message)
+            AlarmSoundPlayer.playWithAnnouncement(applicationContext, announcement)
+        }
 
         return Result.success()
+    }
+
+    private fun isAppInForeground(context: Context): Boolean {
+        val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        return am.runningAppProcesses?.any {
+            it.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
+                it.processName == context.packageName
+        } ?: false
     }
 
     private fun showNotification(title: String, message: String) {
