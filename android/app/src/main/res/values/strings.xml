@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Seafood Timer</string>
-    <string name="title_activity_main">Seafood Timer</string>
-    <string name="package_name">com.pmc.timer</string>
-    <string name="custom_url_scheme">com.pmc.timer</string>
+    <string name="app_name">Sempel Timer</string>
+    <string name="title_activity_main">Sempel Timer</string>
+    <string name="package_name">com.sempel.timer</string>
+    <string name="custom_url_scheme">com.sempel.timer</string>
 </resources>

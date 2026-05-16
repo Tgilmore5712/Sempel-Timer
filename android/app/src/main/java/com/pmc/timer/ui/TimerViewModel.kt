@@ -1,4 +1,4 @@
-package com.pmc.timer.ui
+package com.sempel.timer.ui
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import com.pmc.timer.models.BoilItem
-import com.pmc.timer.audio.AlarmSoundPlayer
-import com.pmc.timer.worker.AlertWorker
+import com.sempel.timer.models.BoilItem
+import com.sempel.timer.audio.AlarmSoundPlayer
+import com.sempel.timer.worker.AlertWorker
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.util.UUID
@@ -94,6 +94,7 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
                         running = false,
                         alertMessage = "Done! Pull everything out."
                     ) }
+                    playCompletionSound()
                     stopTimer()
                     break
                 }
@@ -181,6 +182,13 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
         else
             "Time to add next item"
         AlarmSoundPlayer.playWithAnnouncement(getApplication(), announcement)
+    }
+
+    private fun playCompletionSound() {
+        AlarmSoundPlayer.playWithAnnouncement(
+            getApplication(),
+            "Boil complete. Pull everything out."
+        )
     }
 
     fun reset() {

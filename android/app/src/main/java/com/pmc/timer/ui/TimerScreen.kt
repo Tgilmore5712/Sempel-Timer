@@ -1,4 +1,4 @@
-package com.pmc.timer.ui
+package com.sempel.timer.ui
 
 import android.app.Activity
 import android.media.RingtoneManager
@@ -24,8 +24,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.pmc.timer.audio.AlarmPreferences
-import com.pmc.timer.audio.AlarmSoundPlayer
+import com.sempel.timer.audio.AlarmPreferences
+import com.sempel.timer.audio.AlarmSoundPlayer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,7 +49,7 @@ fun TimerScreen(viewModel: TimerViewModel = viewModel()) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Seafood Boil Timer", fontWeight = FontWeight.Bold) },
+                title = { Text("Sempel Timer", fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
                 actions = {
                     IconButton(onClick = {

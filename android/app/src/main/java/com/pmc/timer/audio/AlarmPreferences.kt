@@ -1,4 +1,4 @@
-package com.pmc.timer.audio
+package com.sempel.timer.audio
 
 import android.content.Context
 import android.net.Uri

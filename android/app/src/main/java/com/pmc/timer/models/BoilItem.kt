@@ -1,4 +1,4 @@
-package com.pmc.timer.models
+package com.sempel.timer.models
 
 import java.util.UUID
 

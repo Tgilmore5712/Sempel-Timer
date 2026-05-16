@@ -1,4 +1,4 @@
-package com.pmc.timer.worker
+package com.sempel.timer.worker
 
 import android.app.ActivityManager
 import android.app.NotificationChannel
@@ -9,7 +9,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.pmc.timer.audio.AlarmSoundPlayer
+import com.sempel.timer.audio.AlarmSoundPlayer
 
 class AlertWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
     override fun doWork(): Result {
